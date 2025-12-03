@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('대시보드')}"></head>
+<body class="bg-gray-50 min-h-screen">
+
+<div th:replace="~{fragments/layout :: nav}"></div>
+
+<main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Weather Card -->
+    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 text-white mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm opacity-80">현재 날씨</p>
+                <h2 class="text-4xl font-bold" th:text="${weather.temperature} + '°C'">25°C</h2>
+                <p class="text-lg" th:text="${weather.description}">맑음</p>
+                <p class="text-sm opacity-80" th:text="'체감 ' + ${weather.feelsLike} + '°C'">체감 27°C</p>
+            </div>
+            <div class="text-center">
+                <span class="text-6xl" th:text="${weather.icon}">☀️</span>
+                <p th:text="${weather.cityName}" class="mt-2">서울</p>
+            </div>
+        </div>
+        
+        <!-- Temperature Level -->
+        <div class="mt-4 pt-4 border-t border-white/30">
+            <p class="text-sm">
+                오늘의 옷차림:
+                <span th:switch="${weather.temperatureLevel}">
+                    <span th:case="'VERY_HOT'">🔥 민소매, 반팔, 반바지</span>
+                    <span th:case="'HOT'">☀️ 반팔, 얇은 셔츠</span>
+                    <span th:case="'WARM'">🌤️ 얇은 가디건, 긴팔</span>
+                    <span th:case="'MILD'">🌥️ 얇은 니트, 가디건</span>
+                    <span th:case="'COOL'">🍂 자켓, 가디건, 야상</span>
+                    <span th:case="'CHILLY'">🌬️ 트렌치코트, 야상</span>
+                    <span th:case="'COLD'">❄️ 코트, 가죽자켓</span>
+                    <span th:case="'VERY_COLD'">🥶 패딩, 두꺼운 코트</span>
+                </span>
+            </p>
+        </div>
+    </div>
+    
+    <div class="grid lg:grid-cols-3 gap-8">
+        <!-- Avatar Section -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <h3 class="font-bold text-lg mb-4">내 아바타</h3>
+                <div class="aspect-[3/4] bg-gray-100 rounded-xl flex items-center justify-center">
+                    <!-- SVG Avatar Placeholder -->
+                    <div id="avatar-container" class="text-center">
+                        <svg class="w-48 h-64 mx-auto" viewBox="0 0 200 300">
+                            <!-- Simple avatar placeholder -->
+                            <ellipse cx="100" cy="60" rx="40" ry="50" fill="#F5D0C5"/>
+                            <rect x="60" y="110" width="80" height="100" rx="10" fill="#6366f1"/>
+                            <rect x="50" y="210" width="40" height="80" rx="5" fill="#374151"/>
+                            <rect x="110" y="210" width="40" height="80" rx="5" fill="#374151"/>
+                        </svg>
+                        <p class="text-gray-500 mt-4">아바타 설정하기</p>
+                    </div>
+                </div>
+                <a href="/avatar/edit" class="block mt-4 text-center text-indigo-600 hover:underline">
+                    아바타 커스텀
+                </a>
+            </div>
+        </div>
+        
+        <!-- Today's Outfit Recommendation -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-lg">오늘의 추천 코디</h3>
+                    <button onclick="refreshRecommendation()" class="text-indigo-600 hover:underline text-sm">
+                        🔄 다시 추천받기
+                    </button>
+                </div>
+                
+                <div id="outfit-recommendation" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Outfit items will be loaded here -->
+                    <div class="text-center p-4 bg-gray-50 rounded-xl">
+                        <div class="w-20 h-20 bg-gray-200 rounded-lg mx-auto mb-2"></div>
+                        <p class="text-sm text-gray-500">상의</p>
+                        <p class="text-xs text-gray-400">옷을 등록해주세요</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl">
+                        <div class="w-20 h-20 bg-gray-200 rounded-lg mx-auto mb-2"></div>
+                        <p class="text-sm text-gray-500">하의</p>
+                        <p class="text-xs text-gray-400">옷을 등록해주세요</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl">
+                        <div class="w-20 h-20 bg-gray-200 rounded-lg mx-auto mb-2"></div>
+                        <p class="text-sm text-gray-500">아우터</p>
+                        <p class="text-xs text-gray-400">옷을 등록해주세요</p>
+                    </div>
+                    <div class="text-center p-4 bg-gray-50 rounded-xl">
+                        <div class="w-20 h-20 bg-gray-200 rounded-lg mx-auto mb-2"></div>
+                        <p class="text-sm text-gray-500">신발</p>
+                        <p class="text-xs text-gray-400">옷을 등록해주세요</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex gap-4">
+                    <a href="/closet/add" class="flex-1 btn-primary text-center py-3">
+                        + 옷 등록하기
+                    </a>
+                    <a href="/closet" class="flex-1 border border-indigo-500 text-indigo-600 font-medium py-3 rounded-lg text-center hover:bg-indigo-50 transition">
+                        내 옷장 보기
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-3 gap-4 mt-6">
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-indigo-600">0</p>
+                    <p class="text-sm text-gray-500">등록된 옷</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-indigo-600">0</p>
+                    <p class="text-sm text-gray-500">저장된 코디</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 text-center shadow-sm">
+                    <p class="text-2xl font-bold text-indigo-600">0</p>
+                    <p class="text-sm text-gray-500">이번 달 착용</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/layout :: footer}"></div>
+
+<script>
+// 위치 기반 날씨 업데이트
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        // 현재 위치로 페이지 새로고침 (한 번만)
+        if (!window.location.search.includes('lat=')) {
+            window.location.href = `/dashboard?lat=${lat}&lon=${lon}`;
+        }
+    });
+}
+
+function refreshRecommendation() {
+    // TODO: AJAX로 새 코디 추천 받기
+    alert('새로운 코디를 추천해드릴게요! (구현 예정)');
+}
+</script>
+
+</body>
+</html>
