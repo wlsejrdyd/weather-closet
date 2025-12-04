@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="날씨 기반 의류 코디 추천 서비스">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- CSRF Token for AJAX -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <title th:text="${title} + ' | Weather Closet'">Weather Closet</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+        }
+        .btn-primary {
+            @apply bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg transition;
+        }
+        .input-field {
+            @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Navigation -->
+<nav th:fragment="nav" class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="/" class="text-xl font-bold text-indigo-600">
+                    👕 Weather Closet
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="text-gray-600 hover:text-indigo-600">로그인</a>
+                    <a href="/register" class="ml-4 btn-primary">회원가입</a>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="flex items-center space-x-4">
+                    <a href="/dashboard" class="text-gray-600 hover:text-indigo-600">대시보드</a>
+                    <a href="/closet" class="text-gray-600 hover:text-indigo-600">내 옷장</a>
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit" class="text-gray-600 hover:text-red-600">로그아웃</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Footer -->
+<footer th:fragment="footer" class="bg-gray-800 text-white py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-gray-400">© 2025 Weather Closet. Part of <a href="https://salm.kr" class="text-indigo-400 hover:underline">SALM</a> Project</p>
+    </div>
+</footer>
+
+</body>
+</html>

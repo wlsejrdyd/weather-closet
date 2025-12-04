@@ -1,0 +1,85 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: strict
+
+spring:
+  application:
+    name: weather-closet
+    
+  datasource:
+    url: jdbc:mariadb://localhost:9981/closet?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${CLOSET_DB_USERNAME:closet}
+    password: ${CLOSET_DB_PASSWORD:changeme}
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        format_sql: true
+    open-in-view: false
+    
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# JWT Settings
+jwt:
+  secret: ${CLOSET_JWT_SECRET:your-256-bit-secret-key-here-change-in-production}
+  expiration: 86400000  # 24 hours
+  refresh-expiration: 604800000  # 7 days
+
+# Weather API (Open-Meteo - 무료, 키 불필요)
+weather:
+  api:
+    base-url: https://api.open-meteo.com/v1
+
+# File Upload
+upload:
+  path: /data/closet-uploads
+  allowed-extensions: jpg,jpeg,png,gif,webp
+
+# Logging
+logging:
+  level:
+    kr.salm.closet: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+      
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    
+  thymeleaf:
+    cache: true
+
+logging:
+  level:
+    kr.salm.closet: INFO

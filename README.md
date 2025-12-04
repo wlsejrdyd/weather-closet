@@ -37,8 +37,8 @@ export JWT_SECRET=your-256-bit-secret-key-min-32-characters
 
 ### 4. 접속
 
-- Web: http://localhost:8081
-- API: http://localhost:8081/api
+- Web: http://localhost:8082
+- API: http://localhost:8082/api
 
 ## API 엔드포인트
 
